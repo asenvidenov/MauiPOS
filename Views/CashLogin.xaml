@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiPOS.Views.CashLogin"
+             Title="ВПИСВАНЕ">
+    <VerticalStackLayout Margin="10"
+                         Spacing="10">
+        <VerticalStackLayout>
+            <Entry x:Name="pass"
+                   HorizontalOptions="Center" 
+                   Placeholder="ПАРОЛА"
+                   IsPassword="True"
+                   MinimumWidthRequest="200" BackgroundColor="SteelBlue"
+                   />
+            <Button x:Name="btnLogin"
+                    Margin="10"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="200"
+                    Text="ВПИШИ СЕ" 
+                    Clicked="LogIn"/>
+            <Button x:Name="btnContinue"
+                    Margin="10"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="200"
+                    Text="ПРОДЪЛЖИ" 
+                    IsVisible="False"
+                    Clicked="LogIn"/>
+            <Button x:Name="btnLogout"
+                    Margin="10"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="200"
+                    Text="ОТПИШИ СЕ" 
+                    IsVisible="False"
+                    Clicked="LogOut"/>
+            <Button x:Name="btnAdmin"
+                    Margin="10"
+                    HorizontalOptions="Center"
+                    MinimumWidthRequest="200"
+                    Text="АДМИНИСТРИРАНЕ" 
+                    IsVisible="False"
+                    Clicked="LogIn"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout x:Name="opOrdersSL">
+            <Button x:Name="SyncButton"
+                    Clicked="SyncButton_Clicked"
+                    BackgroundColor="red"
+                    TextColor="White"
+                    FontSize="Header"
+                    Text="СИНХРОНИЗАЦИЯ"
+                    IsVisible="False"
+                    />
+            <ListView
+                x:Name="opOrders"
+                IsVisible="False"
+                ItemTapped="OnOrderTapped"
+                >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell 
+                            Text="{Binding ObjName}"
+                            Detail="{Binding CurrentSum, StringFormat = 'СУМА {0:F2} лв.'}"
+                            DetailColor="Black"
+                            CommandParameter="{Binding OrderID}"
+                            />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

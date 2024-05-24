@@ -1,61 +1,88 @@
 using MauiPOS.Data;
 using MauiPOS.Models;
+using MauiPOS.Services;
 using System.Windows.Input;
 
 namespace MauiPOS.Views;
 public partial class CashLogin : ContentPage
 {
-	private POSdata _localDB;
 	public CashLogin()
 	{
 		InitializeComponent();
-		_localDB = new POSdata();
 	}
 
 	private void LogIn(object sender, EventArgs args)
     {
-        var getOpID = new Services.ServerService().RetOpID(pass.Text);
+        var getOpID = new ServerService().RetOpID(pass.Text);
 		if (getOpID != null)
 		{
             Title = getOpID.OpFName;
-            _localDB.SavePOSops(getOpID).Wait();
+            POSdata.SavePOSops(getOpID);
             pass.Text = "";
 			if (getOpID.OpRole > 50)
 			{
-				btnAdmin.IsVisible = true;
-				pass.IsVisible = false;
-				btnLogin.IsVisible = false;
-				btnContinue.IsVisible = true;
-				btnLogout.IsVisible = true;
+                btnAdmin.IsVisible = true;
+            }
+            pass.IsVisible = false;
+            btnLogin.IsVisible = false;
+            btnContinue.IsVisible = true;
+            btnLogout.IsVisible = true;
 
-				_localDB.SaveMaxOrderID().Wait();
-				if(POSGlobals.MaxOrderID < 0)
-				{
-					SyncButton.IsVisible = true;
-					btnAdmin.IsVisible = false;
-					btnContinue.IsVisible= false;
-					return;
-				}
+            lblShiftStart.Text = new AsyncServerServices().RetActiveShift(getOpID.OpID).Result.ShiftStart.ToString();
 
-				var getOrders = new Services.ServerService().RetActiveOrders(getOpID.OpID);
-				if(getOrders != null)
-				{
-					opOrders.ItemsSource = getOrders;
-					opOrders.IsVisible = true;
-				}
+            POSdata.SaveMaxOrderID();
+            if (POSGlobals.MaxOrderID < POSGlobals.LocalOrderID)
+            {
+				NotSynced();
+                return;
+            }
+
+            var getGoods = new ServerService().SyncGoods();
+			if (!getGoods)
+			{
+				NotSynced();
+				return;
 			}
-		}
+
+            var getObjects = new ServerService().SyncObjects();
+			if (!getObjects)
+			{ NotSynced(); return; }
+
+            var getCashPrice = new ServerService().SyncCashPrice();
+			if (!getCashPrice) { NotSynced(); return; }
+
+
+            var getOrders = new ServerService().RetActiveOrders(getOpID.OpID);
+            if (getOrders != null)
+            {
+                opOrders.ItemsSource = getOrders;
+                opOrders.IsVisible = true;
+            }
+
+        }
     }
 
 	private void SyncButton_Clicked(object sender, EventArgs args)
 	{
-		return;
-	}
+        var getGoods = new ServerService().SyncGoods();
+        if (!getGoods)
+        {
+            NotSynced();
+            return;
+        }
+
+        var getObjects = new ServerService().SyncObjects();
+        if (!getObjects)
+        { NotSynced(); return; }
+
+        var getCashPrice = new ServerService().SyncCashPrice();
+        if (!getCashPrice) { NotSynced(); return; }
+    }
 
 
     private void LogOut(object sender, EventArgs args)
 	{
-		_localDB.LogOut();
+		POSdata.LogOut();
 		pass.IsVisible = true;
 		btnLogin.IsVisible = true;
 		btnContinue.IsVisible = false;
@@ -76,4 +103,12 @@ public partial class CashLogin : ContentPage
 		catch { return; }
 		
 	}
+
+	private void NotSynced()
+	{
+        SyncButton.IsVisible = true;
+        btnAdmin.IsVisible = false;
+        btnContinue.IsVisible = false;
+		return;
+    }
 }

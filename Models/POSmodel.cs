@@ -22,13 +22,13 @@ namespace MauiPOS.Models
         public int OrderID { get; set; }
         public int OpID { get; set; }
         public DateTime DateOpen { get; set; }
-        public DateTime DateModified { get; set; }
-        public DateTime DateClosed { get; set; }
+        public DateTime? DateModified { get; set; }
+        public DateTime? DateClosed { get; set; }
         public int ObjectID { get; set; }
-        public decimal CurrentSum { get; set; }
-        public decimal FinalSum { get; set; }
-        public Boolean RE { get; set; }
-        public int REOrderID { set; get; }
+        public decimal? CurrentSum { get; set; }
+        public decimal? FinalSum { get; set; }
+        public bool? RE { get; set; }
+        public int? REOrderID { set; get; }
     }
 
     public class POSCashPrice
@@ -37,10 +37,10 @@ namespace MauiPOS.Models
         public int ID { get; set; }
         public int GoodsID { get; set; }
         public int ObjectID { get; set; }
-        public int CashEnabled { get; set; }
-        public int PosPrinter { get; set; }
+        public bool CashEnabled { get; set; }
+        public Int16? PosPrinter { get; set; }
         public decimal CashPrice { get; set; }
-        public decimal DFPrice { get; set; }
+        public decimal? DFPrice { get; set; }
     }
 
     public class POSDiscount
@@ -77,12 +77,12 @@ namespace MauiPOS.Models
         [PrimaryKey, NotNull]
         public int GoodsID { get; set; }
         [NotNull]
-        public Boolean isGroup { get; set; }
+        public bool isGroup { get; set; }
         [NotNull]
         public int GParent { get; set; }
-        public string CashName { get; set; }
-        public string CashCode { get; set; }
-        public Boolean DiscountAllowed { get; set; }
+        public string? CashName { get; set; }
+        public string? CashCode { get; set; }
+        public bool? DiscountAllowed { get; set; }
     }
 
     public class POSObjects 
@@ -93,8 +93,8 @@ namespace MauiPOS.Models
         public string ObjName { get; set; }
         [NotNull]
         public int Parent {  get; set; }
-        public string ObjCode { get; set; }
-        public Boolean isActive { get; set; }
+        public string? ObjCode { get; set; }
+        public bool? IsActive { get; set; }
     }
 
     public class POSOrderDetails
@@ -110,8 +110,8 @@ namespace MauiPOS.Models
         [NotNull]
         public int Cnt {  get; set; }
         [NotNull]
-        public Boolean Annul {  get; set; }
-        public string Modiff { get; set; }
+        public int Annul {  get; set; }
+        public string? Modiff { get; set; }
         [NotNull]
         public Decimal CashPrice { get; set; }
     }
@@ -201,6 +201,10 @@ namespace MauiPOS.Models
         public decimal CurrentSum { set; get; }
 
     }
-    
 
+    public class ActiveShift
+    {
+        public int ShiftID { get; set; }
+        public DateTime ShiftStart { get; set; }
+    }
 }

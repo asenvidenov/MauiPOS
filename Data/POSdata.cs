@@ -1,15 +1,13 @@
 ﻿using MauiPOS.Models;
-using Microsoft.Data.SqlClient;
 using SQLite;
 
 namespace MauiPOS.Data
 {
-    public class POSdata
+    public static class POSdata
     {
-        SQLiteConnection? LocalDB;
-        public POSdata() { }
+        static SQLiteConnection? LocalDB;
 
-        async Task Init()
+        static void Init()
         {
             if (LocalDB is not null) return;
 
@@ -27,22 +25,22 @@ namespace MauiPOS.Data
             LocalDB.CreateTable<POSSalesPay>();
         }
         
-        public async Task<int> SavePOSops(POSOps posOp)
+        public static int SavePOSops(POSOps posOp)
         {
-            await Init();
+            Init();
             return LocalDB.InsertOrReplace(posOp);
         }
-        public async void LogOut()
+        public static void LogOut()
         {
-            await Init();
+            Init();
             SQLiteCommand cmd = new(LocalDB);
             cmd.CommandText = "DELETE from POSOps";
             cmd.ExecuteNonQuery();
         }
 
-        public async Task<int> SaveMaxOrderID()
+        public static int SaveMaxOrderID()
         {
-            await Init();
+             Init();
             sqlite_sequence _sequence = new sqlite_sequence() { name="POSOrders", seq=POSGlobals.MaxOrderID};
             SQLiteCommand cmd = new(LocalDB);
             cmd.CommandText = "SELECT MAX(OrderID) from POSOrders";
@@ -50,7 +48,7 @@ namespace MauiPOS.Data
             maxID = maxID == null ? 0 : maxID.Value;
             if (maxID > _sequence.seq)
             {
-                POSGlobals.MaxOrderID = -1;
+                POSGlobals.LocalOrderID = (int)maxID;
                 return -1;
             }
             
@@ -58,5 +56,22 @@ namespace MauiPOS.Data
             return LocalDB.InsertOrReplace(_sequence);
         }
 
+        public static int SaveGood(POSGoods posGood)
+        { 
+            Init();
+            return LocalDB.InsertOrReplace(posGood);
+        }
+
+        public static int SaveCashPrice(POSCashPrice posCashPrice)
+        {
+            Init();
+            return LocalDB.InsertOrReplace(posCashPrice);
+        }
+
+        public static int SaveObjects(POSObjects posObject)
+        {
+            Init();
+            return LocalDB.InsertOrReplace(posObject);
+        }
     }
 }

@@ -22,6 +22,9 @@ namespace MauiPOS
         }
 
         public static Int32 MaxOrderID { get; set; }
+        public static Int32 LocalOrderID { get; set; }
+        public static int OpShift {  get; set; }
+        public static DateTime ShiftStart { get; set; }
 
         public static Boolean LocalOnly { get; set; }
     }

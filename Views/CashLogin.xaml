@@ -6,6 +6,9 @@
     <VerticalStackLayout Margin="10"
                          Spacing="10">
         <VerticalStackLayout>
+            <Label x:Name="lblShiftStart"
+                   HorizontalOptions="Start">
+            </Label>
             <Entry x:Name="pass"
                    HorizontalOptions="Center" 
                    Placeholder="ПАРОЛА"

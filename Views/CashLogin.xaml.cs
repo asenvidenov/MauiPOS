@@ -28,7 +28,9 @@ public partial class CashLogin : ContentPage
             btnContinue.IsVisible = true;
             btnLogout.IsVisible = true;
 
-            lblShiftStart.Text = new AsyncServerServices().RetActiveShift(getOpID.OpID).Result.ShiftStart.ToString();
+            ActiveShift ashift = new();
+            RetServerServices.RetActiveShift(getOpID.OpID, ref ashift);
+            lblShiftStart.Text = ashift.ShiftStart.ToString();
 
             POSdata.SaveMaxOrderID();
             if (POSGlobals.MaxOrderID < POSGlobals.LocalOrderID)
@@ -91,6 +93,7 @@ public partial class CashLogin : ContentPage
 		Title = "ÂÏÈÑÂÀÍÅ";
 		opOrders.ItemsSource = "";
 		opOrders.IsVisible = false;
+        lblShiftStart.Text = "";
 	}
 
 	private  void  OnOrderTapped(object sender, ItemTappedEventArgs args)

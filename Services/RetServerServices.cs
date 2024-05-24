@@ -1,24 +1,17 @@
 ﻿using MauiPOS.Models;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MauiPOS.Services
 {
-    internal class AsyncServerServices
+    internal static class RetServerServices
     {
-        private SqlConnection _asyncCnn = new("Server=192.168.13.155;Database=pos;User Id=pos;Password=POSpassword; TrustServerCertificate=True; ");
-        private SqlCommand _asyncCmd = new();
+        private static SqlConnection _Cnn = new("Server=192.168.13.155;Database=pos;User Id=pos;Password=POSpassword; TrustServerCertificate=True; ");
 
-        public AsyncServerServices() { }
 
-        private async Task<bool> IsConnected()
+        private static bool IsConnected()
         {
-            if (_asyncCnn.State.Equals(ConnectionState.Open))
+            if (_Cnn.State.Equals(ConnectionState.Open))
             {
                 return true;
             }
@@ -26,7 +19,7 @@ namespace MauiPOS.Services
             {
                 try
                 {
-                    await _asyncCnn.OpenAsync().ConfigureAwait(false);
+                    _Cnn.Open();
                     return true;
                 }
                 catch
@@ -37,27 +30,26 @@ namespace MauiPOS.Services
             }
         }
 
-        public async Task<ActiveShift> RetActiveShift(int OpID)
+        public static void RetActiveShift(int OpID, ref ActiveShift asheet)
         {
-            IsConnected().Wait();
+            if(!IsConnected()) return;
             SqlCommand cmd = new("SP_srv_OpsShifts")
             {
-                Connection = _asyncCnn,
+                Connection = _Cnn,
                 CommandType = CommandType.StoredProcedure
             };
             cmd.Parameters.AddWithValue("@OpID", OpID);
-            var rdr = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
-            var asheet = new ActiveShift();
+            var rdr = cmd.ExecuteReader();
             if (rdr.Read())
             {
                 POSGlobals.OpShift = rdr.GetInt32(0);
                 POSGlobals.ShiftStart = rdr.GetDateTime(1);
                 asheet.ShiftID = rdr.GetInt32(0);
                 asheet.ShiftStart = rdr.GetDateTime(1);
-                return asheet;
+                return;
             }
             else
-            { return asheet; }
+            { return; }
         }
     }
 }

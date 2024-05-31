@@ -7,10 +7,10 @@ namespace MauiPOS.Services
 {
     public class ServerService
     {
-        private SqlConnection _connection = new("Server=192.168.13.155;Database=pos;User Id=pos;Password=POSpassword; TrustServerCertificate=True; ");
-        private SqlCommand _command = new();
+        private static SqlConnection _connection = new("Server=192.168.13.155;Database=pos;User Id=pos;Password=POSpassword; TrustServerCertificate=True; ");
+        private static SqlCommand _command = new();
 
-        private bool IsConnected()
+        private static bool IsConnected()
         {
             if (_connection.State.Equals(ConnectionState.Open))
             {
@@ -30,62 +30,9 @@ namespace MauiPOS.Services
 
             }
         }
-        public POSOps RetOpID(string passHash)
-        {
-            POSOps po = new();
-
-            if (!IsConnected()) return po;
-            _command.Connection = _connection;
-            _command.CommandType = CommandType.Text;
-            _command.Parameters.Clear();
-            _command.CommandText = @"SELECT *, isnull((select MAX(OrderID) from srvOrders where OpID=so.OpID),0) as MaxOrderID from srvOps so where OpPass=N'" + passHash + @"'";
-            SqlDataReader _reader = _command.ExecuteReader();
-            if (_reader.HasRows)
-            {
-                _reader.Read();
-
-                po.OpID = _reader.GetInt32(0);
-                po.OpName = _reader.GetString(1);
-                po.OpPass = _reader.GetString(2);
-                po.OpRole = _reader.GetInt16(3);
-                po.OpFName = _reader.GetString(4);
-                po.OpCode = _reader.GetString(5);
-                po.OpApp = _reader.GetString(6);
-                po.RoleEnd = _reader.IsDBNull(8) ? DateTime.Now.AddMonths(1) : _reader.GetDateTime(8);
-                POSGlobals.MaxOrderID = _reader.GetInt32(9);
-
-                _reader.Close();
-                return po;
-            }
-            else {
-                _reader.Close();
-                return po; }
-        }
 
 
-        public IEnumerable<ViewActiveOrders> RetActiveOrders(int OpID)
-        {
-            IsConnected();
-            _command.Connection = _connection;
-            _command.CommandType = CommandType.Text;
-            _command.Parameters.Clear();
-            _command.CommandText = @"SELECT OrderID, ObjName, CurrentSum from View_OpActiveOrders where OpID=" + OpID.ToString() + " ORDER BY ObjName, DateOpen";
-            Models.ViewActiveOrders result;
-            List<Models.ViewActiveOrders> results = new List<Models.ViewActiveOrders>();
-            using (var _reader = _command.ExecuteReader())
-            {
-                while (_reader.Read())
-                {
-                    result = new();
-                    result.OrderID = _reader.GetInt64(0);
-                    result.ObjName = _reader.GetString(1);
-                    result.CurrentSum = _reader.IsDBNull(2) ? 0 : (decimal)_reader.GetFloat(2);
-                    results.Add(result);
-                }
-            }
-            return results;
-        }
-        public bool SyncGoods()
+        public static bool SyncGoods()
         {
             POSGoods _srvGood;
             if (!IsConnected()) return false;
@@ -122,7 +69,7 @@ namespace MauiPOS.Services
             return true;
         }
 
-        public bool SyncObjects()
+        public static bool SyncObjects()
         {
             POSObjects _srvObject;
             if (!IsConnected()) return false;
@@ -157,7 +104,7 @@ namespace MauiPOS.Services
             _reader.Close();
             return true;
         }
-        public bool SyncCashPrice()
+        public static bool SyncCashPrice()
         {
             POSCashPrice _srvCashPrice;
             if (!IsConnected()) return false;
@@ -195,7 +142,7 @@ namespace MauiPOS.Services
             return true;
         }
 
-        public bool SrvSendOrders()
+        public static bool SrvSendOrders(int OpID, int OrderID)
         {
             try
             {
@@ -212,7 +159,7 @@ namespace MauiPOS.Services
                 _cmd.CommandText = "BEGIN TRANSACTION;";
                 _cmd.ExecuteNonQuery();
                 POSRetData retData = new();
-                foreach (POSOrders order in retData.RetOrders(POSGlobals.MaxOrderID))
+                foreach (POSOrders order in retData.RetOrders(OrderID, OpID))
                 {
                     _cmd.CommandText = $"INSERT INTO srvOrdes(OrderID, OpID, DateOpen, DateModified, DateClosed, ObjectID, CurrentSum, FinalSum, RE, REOrderID) VALUES({order.OrderID}, {order.OpID}, {order.DateOpen}, {order.DateModified} , {order.DateClosed} , {order.ObjectID}, {order.CurrentSum}, {order.FinalSum}, {order.RE}, {order.REOrderID})";
                     if (_cmd.ExecuteNonQuery() <= 0)
@@ -240,5 +187,27 @@ namespace MauiPOS.Services
             catch { return false; }
         }
 
+        public static bool InitialSync()
+        {
+            var result = false;
+            var localres = new POSRetData().RetLocalMaxOrderIDByOps();
+            if(localres != null )
+            {
+                foreach (MaxOrderIDByOps local in localres)
+                {
+                    var remote = RetServerServices.RetMaxOrderID(local.opID);
+                    if (local.MaxOrderID > remote.MaxOrderID)
+                    {
+                        result = result || SrvSendOrders(local.opID, remote.MaxOrderID);
+                    }
+                    else
+                    {
+                        result = result || RetServerServices.RetSrvOrders(local.opID, false, local.MaxOrderID)>0;
+                    }
+                }
+                return result;
+            }
+            return true;
+        }
     }
 }

@@ -8,8 +8,12 @@
     Title="MauiPOS">
 
     <ShellContent
-        Title="Home"
+        Title="LogIn"
         ContentTemplate="{DataTemplate local:CashLogin}"
         Route="CashLogin" />
+    <ShellContent
+    Title="OrderDetails"
+    ContentTemplate="{DataTemplate local:MAUIOrder}"
+    Route="MAUIOrder" />
 
 </Shell>

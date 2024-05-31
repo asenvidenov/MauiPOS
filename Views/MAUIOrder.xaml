@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiPOS.Views.MAUIOrder"
+             Shell.NavBarIsVisible="False"
+             Title="MAUIOrder"
+             >
+    <StackLayout>
+<!--         <SwipeView x:Name="GoodsView"              
+                   >
+         <SwipeView.TopItems>
+                <SwipeItems x:Name="GoodsItems"
+                        Mode="Execute"
+                        SwipeBehaviorOnInvoked="Close"
+                        >
+                    <SwipeItem Text="АРТИКУЛИ"
+                       BackgroundColor="Blue"
+                       Invoked="MenuCommand"
+                       CommandParameter="GoodsID"
+                           />
+                </SwipeItems>
+            </SwipeView.TopItems>
+        </SwipeView> -->
+        <FlexLayout x:Name="GoodsFlex"
+                    IsVisible="True"
+                    Wrap="Wrap"
+                    JustifyContent="SpaceAround" 
+                    FlexLayout.Grow="1"
+                        HorizontalOptions="FillAndExpand"
+                    MinimumHeightRequest="50"
+                    >
+        </FlexLayout>
+        <ListView x:Name="oDetails"
+                        ItemSelected="OnDetailSelected"
+                        IsVisible="True"
+                        HorizontalOptions="FillAndExpand"
+                  ItemsSource="{Binding Result}"
+                        >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems Mode="Reveal">
+                                    <SwipeItem Text="Add" BackgroundColor="Green" Invoked="AddCommand"
+                                               CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                                <SwipeView.RightItems>
+                                    <SwipeItems Mode="Reveal">
+                                        <SwipeItem Text="Delete"
+                                               BackgroundColor="DarkRed"
+                                               Invoked="DeleteCommand"
+                                               CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <Grid Padding="0" HorizontalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0"
+                                               Grid.Row="0"
+                                               Text="{Binding CashName}"
+                                               FontAttributes="Bold"
+                                               FontSize="Default"
+                                               HorizontalTextAlignment="Start" HorizontalOptions="Start"
+                                               MaximumWidthRequest="300"
+                                               />
+                                    <Label Grid.Column="0"
+                                               Grid.Row="1"
+                                               Text="{Binding Modiff, TargetNullValue='БЕЗ'}"
+                                               FontSize="Small" 
+                                               TextColor="Green"
+                                               />
+                                    <BoxView 
+                                                Grid.Column="1"
+                                                Grid.RowSpan="2"
+                                                Color="#008CFF" />
+                                    <Label
+                                               Grid.Column="1"
+                                               Grid.RowSpan="2"
+                                               Text="{Binding Cnt}"
+                                               FontAttributes="Bold"
+                                               FontSize="Large"
+                                               HorizontalTextAlignment="Center" HorizontalOptions="Center"
+                                                />
+                                    <Label
+                                               Grid.Column="2"
+                                                Grid.Row="1"
+                                                Text="{Binding Annul}"
+                                                FontSize="Small"
+                                                TextColor="red" VerticalTextAlignment="Center"
+                                                />
+                                    <Label
+                                                Grid.Column="2"
+                                                Grid.Row="0"
+                                                Text="{Binding CashPrice, StringFormat = '{0:F2}'}"
+                                                HorizontalTextAlignment="End" HorizontalOptions="End" />
+
+
+
+                                </Grid>
+                            </SwipeView>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

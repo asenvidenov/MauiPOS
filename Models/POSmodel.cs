@@ -1,5 +1,7 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 using System.Numerics;
+using System.Windows.Input;
 
 namespace MauiPOS.Models
 {
@@ -18,7 +20,7 @@ namespace MauiPOS.Models
 
     public class POSOrders
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public int OrderID { get; set; }
         public int OpID { get; set; }
         public DateTime DateOpen { get; set; }
@@ -97,9 +99,10 @@ namespace MauiPOS.Models
         public bool? IsActive { get; set; }
     }
 
-    public class POSOrderDetails
+    public class POSOrderDetails : ObservableObject
     {
-        [PrimaryKey, AutoIncrement]
+        private int _cnt;
+        [PrimaryKey]
         public int ID { get; set; }
         [NotNull]
         public int OrderID { get; set; }
@@ -108,7 +111,7 @@ namespace MauiPOS.Models
         [NotNull]
         public int GoodsID { get; set; }
         [NotNull]
-        public int Cnt {  get; set; }
+        public int Cnt {  get { return _cnt; } set { SetProperty(ref _cnt, value); } }
         [NotNull]
         public int Annul {  get; set; }
         public string? Modiff { get; set; }
@@ -116,9 +119,14 @@ namespace MauiPOS.Models
         public Decimal CashPrice { get; set; }
     }
 
+    public class POSOrderDetailsView : POSOrderDetails
+    {
+        public string CashName { get; set; }
+    }
+
     public class POSOrderChrono
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public int ID { get; set; }
         [NotNull]
         public int OrderID { get; set; }
@@ -146,7 +154,7 @@ namespace MauiPOS.Models
 
     public class POSSales
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public int ID { get; set; }
         [NotNull]
         public DateTime SaleDate { get; set; }
@@ -177,7 +185,7 @@ namespace MauiPOS.Models
 
     public class POSSalesPay
     {
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public int ID { get; set; }
         [NotNull]
         public int SaleID { get; set; }
@@ -196,7 +204,7 @@ namespace MauiPOS.Models
     }
     public class ViewActiveOrders
     {
-        public BigInteger OrderID { get; set; }
+        public int OrderID { get; set; }
         public string? ObjName { get; set; }
         public decimal CurrentSum { set; get; }
 
@@ -206,5 +214,46 @@ namespace MauiPOS.Models
     {
         public int ShiftID { get; set; }
         public DateTime ShiftStart { get; set; }
+    }
+
+    public class MaxOrderIDByOps
+    {
+        public int opID { get; set; }
+        public int MaxOrderID { get; set; }
+    }
+
+    public class GoodsByGroup
+    {
+        public int GoodsID { get; set; }
+        public bool IsGroup { get; set; }
+        public int GParent { get; set; }
+        public string CashName { get; set; }
+    }
+
+    public class MyCommand : ICommand
+    {
+        public Predicate<object> CanExecuteFunc
+        {
+            get;
+            set;
+        }
+
+        public Action<object> ExecuteFunc
+        {
+            get;
+            set;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return CanExecuteFunc(parameter);
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            ExecuteFunc(parameter);
+        }
     }
 }

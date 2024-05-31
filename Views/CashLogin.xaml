@@ -53,22 +53,31 @@
                     Text="СИНХРОНИЗАЦИЯ"
                     IsVisible="False"
                     />
-            <ListView
-                x:Name="opOrders"
-                IsVisible="False"
-                ItemTapped="OnOrderTapped"
-                >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextCell 
-                            Text="{Binding ObjName}"
-                            Detail="{Binding CurrentSum, StringFormat = 'СУМА {0:F2} лв.'}"
-                            DetailColor="Black"
-                            CommandParameter="{Binding OrderID}"
-                            />
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <SwipeView>
+                <SwipeView.RightItems>
+                    <SwipeItems Mode="Execute">
+                        <SwipeItem Text="Delete"
+                       BackgroundColor="DarkRed"
+                       Invoked="DeleteCommand"/>
+                    </SwipeItems>
+                </SwipeView.RightItems>
+                    <ListView
+                    x:Name="opOrders"
+                    IsVisible="False"
+                    ItemTapped="OnOrderTapped"
+                    >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextCell x:Name="ListItem"
+                                    Text="{Binding ObjName}"
+                                    Detail="{Binding CurrentSum, StringFormat = 'СУМА {0:F2} лв.'}"
+                                    DetailColor="Black"
+                                    CommandParameter="{Binding OrderID}"
+                                    />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </SwipeView>
         </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

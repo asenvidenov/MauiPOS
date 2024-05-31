@@ -46,14 +46,25 @@ namespace MauiPOS.Data
             cmd.CommandText = "SELECT MAX(OrderID) from POSOrders";
             Int32? maxID = cmd.ExecuteScalar<Int32?>();
             maxID = maxID == null ? 0 : maxID.Value;
+            POSGlobals.LocalOrderID = (int)maxID;
             if (maxID > _sequence.seq)
-            {
-                POSGlobals.LocalOrderID = (int)maxID;
+            {        
                 return -1;
             }
             
             LocalDB.Execute("DELETE FROM sqlite_sequence where name = ?", _sequence.name);
             return LocalDB.InsertOrReplace(_sequence);
+        }
+
+        public static void CheckMaxOrderID()
+        {
+            Init();
+            SQLiteCommand cmd = new(LocalDB);
+            cmd.CommandText = "SELECT MAX(OrderID) from POSOrders WHERE OpID="+POSGlobals.localOpID;
+            Int32? maxID = cmd.ExecuteScalar<Int32?>();
+            maxID = maxID == null ? 0 : maxID.Value;
+            POSGlobals.LocalOrderID = (int)maxID;
+
         }
 
         public static int SaveGood(POSGoods posGood)
@@ -72,6 +83,17 @@ namespace MauiPOS.Data
         {
             Init();
             return LocalDB.InsertOrReplace(posObject);
+        }
+
+        public static int SaveOrders(List<POSOrders> pOSOrders)
+        {
+            Init();
+            int counter=0;
+            foreach (POSOrders o in pOSOrders)
+            {
+                counter = +LocalDB.InsertOrReplace(o);
+            }
+            return counter;
         }
     }
 }

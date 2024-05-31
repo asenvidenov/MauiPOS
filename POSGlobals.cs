@@ -1,7 +1,4 @@
-﻿
-using System.Data.SqlTypes;
-
-namespace MauiPOS
+﻿namespace MauiPOS
 {
     public static class POSGlobals
     {
@@ -20,12 +17,13 @@ namespace MauiPOS
             return Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
 
         }
-
-        public static Int32 MaxOrderID { get; set; }
-        public static Int32 LocalOrderID { get; set; }
-        public static int OpShift {  get; set; }
+        public static int localOpID { get; set; }
+        public static int MaxOrderID { get; set; }
+        public static int LocalOrderID { get; set; }
+        public static int CurrentOrderID { get; set; }  
+        public static int OpShift { get; set; }
         public static DateTime ShiftStart { get; set; }
 
-        public static Boolean LocalOnly { get; set; }
+        public static bool LocalOnly { get; set; }
     }
 }

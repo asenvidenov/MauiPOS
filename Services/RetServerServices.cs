@@ -173,9 +173,10 @@ namespace MauiPOS.Services
             };
         }
 
-        public static ObservableCollection<POSOrderDetailsView> RetSrvOrderDetails(int OrderID)
+        public static List<POSOrderDetailsView> RetSrvOrderDetails(int OrderID)
         {
             POSOrderDetailsView pod = new();
+            List<POSOrderDetailsView> result = [];
             if(!IsConnected() ) return [];
             SqlCommand cmd = new()
             {
@@ -186,17 +187,23 @@ namespace MauiPOS.Services
             var _reader = cmd.ExecuteReader();
             try
             {
-                _reader.Read();
-                pod.ID=_reader.GetInt32(0);
-                pod.OpID = POSGlobals.localOpID;
-                pod.OrderID = OrderID;
-                pod.GoodsID = _reader.GetInt32(3);
-                pod.CashName = new POSRetData().RetCashName(pod.GoodsID);
-                pod.Cnt = _reader.GetInt32(4) - _reader.GetInt32(5);
-                pod.Annul = _reader.GetInt32(5);
-                pod.Modiff = _reader.IsDBNull(6) ? "" : _reader.GetString(6);
-                pod.CashPrice = (decimal)_reader.GetFloat(7);
-                return [pod];
+                while (_reader.Read())
+                {
+                    pod.ID = _reader.GetInt32(0);
+                    pod.OpID = POSGlobals.localOpID;
+                    pod.OrderID = OrderID;
+                    pod.GoodsID = _reader.GetInt32(3);
+                    pod.CashName = new POSRetData().RetCashName(pod.GoodsID);
+                    pod.Cnt = _reader.GetInt32(4) - _reader.GetInt32(5);
+                    pod.Annul = _reader.GetInt32(5);
+                    pod.Modiff = _reader.IsDBNull(6) ? "" : _reader.GetString(6);
+                    pod.CashPrice = (decimal)_reader.GetFloat(7);
+
+                    result.Add(pod);
+                }
+                var _res = result.Cast<POSOrderDetails>().ToList();
+                POSdata.SaveOrderDetails(ref _res);
+                return result;
             }
             catch { return []; }
         }

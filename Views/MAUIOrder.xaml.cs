@@ -7,7 +7,7 @@ namespace MauiPOS.Views;
 
 public partial class MAUIOrder : ContentPage
 {
-    public ObservableCollection<POSOrderDetailsView> Result { get; set; }
+    public List<POSOrderDetailsView> Result { get; set; }
     public MAUIOrder()
 	{
         InitializeComponent();
@@ -30,14 +30,31 @@ public partial class MAUIOrder : ContentPage
         GoodsCommand(0);
     }
 
+    private void AddToLocalDB(ref POSOrderDetailsView res)
+    {
+        POSOrderDetails _insGood = new()
+        {
+            ID = res.ID,
+            CashPrice = res.CashPrice,
+            Annul = res.Annul,
+            Cnt = res.Cnt,
+            GoodsID = res.GoodsID,
+            OpID = res.OpID,
+            OrderID = res.OrderID,
+            Modiff = res.Modiff
+
+        };
+        POSdata.SaveOrderDetail(ref _insGood);
+    }
     private void AddCommand(object sender, EventArgs args)
     {
         var swipeview = sender as SwipeItem;    
         var item = (POSOrderDetailsView)swipeview.CommandParameter;
-        POSOrderDetailsView? res = Result.ToList().Find(res => res.ID == item.ID);
+        POSOrderDetailsView? res = Result.Find(res => res.ID == item.ID);
         if(res != null)
         {
             res.Cnt+= 1;
+            AddToLocalDB(ref res);
         }
         //oDetails.ItemsSource = null;
         //oDetails.ItemsSource = result;
@@ -46,11 +63,12 @@ public partial class MAUIOrder : ContentPage
     {
         var swipeview = sender as SwipeItem;
         var item = (POSOrderDetailsView)swipeview.CommandParameter;
-        POSOrderDetailsView? res = Result.ToList().Find(res => res.ID == item.ID);
+        POSOrderDetailsView? res = Result.Find(res => res.ID == item.ID);
         if (res != null)
         {
             res.Cnt -= 1;
             if(res.Cnt == 0) {Result.Remove(res); }
+            AddToLocalDB(ref res);
         }
     }
 
@@ -59,7 +77,7 @@ public partial class MAUIOrder : ContentPage
 
     }
 
-    private void AddGoodToList(int goodsID, int cnt = 1)
+    private void AddGoodToList(int goodsID, int cnt = 1, string? modiff=null)
     {
         (decimal, decimal) gPrice = new POSRetData().RetGoodPrice(goodsID);
         var _newGood = new POSOrderDetailsView()
@@ -71,13 +89,12 @@ public partial class MAUIOrder : ContentPage
             CashName = new POSRetData().RetCashName(goodsID),
             CashPrice=gPrice.Item1,
             Cnt = cnt,
-            Annul = 0
+            Annul = 0,
+            Modiff = modiff
         };
         Result.Add(_newGood);
-        //oDetails.ItemsSource = null;
-        //oDetails.ItemsSource = Result;
+        AddToLocalDB(ref _newGood);
         oDetails.IsVisible = true;
-
     }
     private void GoodsCommand(int GoodsID)
     {

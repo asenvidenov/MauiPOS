@@ -5,6 +5,8 @@ using System.Windows.Input;
 
 namespace MauiPOS.Models
 {
+
+    #region Tables
     public class POSOps
     {
         [PrimaryKey]
@@ -119,11 +121,6 @@ namespace MauiPOS.Models
         public Decimal CashPrice { get; set; }
     }
 
-    public class POSOrderDetailsView : POSOrderDetails
-    {
-        public string CashName { get; set; }
-    }
-
     public class POSOrderChrono
     {
         [PrimaryKey]
@@ -202,6 +199,13 @@ namespace MauiPOS.Models
         public string? name { get; set; }
         public Int32 seq { get; set; }
     }
+    #endregion
+
+    #region Views
+    public class POSOrderDetailsView : POSOrderDetails
+    {
+        public string? CashName { get; set; }
+    }
     public class ViewActiveOrders
     {
         public int OrderID { get; set; }
@@ -229,7 +233,9 @@ namespace MauiPOS.Models
         public int GParent { get; set; }
         public string CashName { get; set; }
     }
+    #endregion Views
 
+    #region Commands
     public class MyCommand : ICommand
     {
         public Predicate<object> CanExecuteFunc
@@ -256,4 +262,5 @@ namespace MauiPOS.Models
             ExecuteFunc(parameter);
         }
     }
+    #endregion Commands
 }

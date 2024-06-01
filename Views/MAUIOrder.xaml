@@ -41,13 +41,13 @@
                     <ViewCell>
                         <SwipeView>
                             <SwipeView.LeftItems>
-                                <SwipeItems Mode="Reveal">
+                                <SwipeItems Mode="Execute">
                                     <SwipeItem Text="Add" BackgroundColor="Green" Invoked="AddCommand"
                                                CommandParameter="{Binding .}"/>
                                 </SwipeItems>
                             </SwipeView.LeftItems>
                                 <SwipeView.RightItems>
-                                    <SwipeItems Mode="Reveal">
+                                    <SwipeItems Mode="Execute">
                                         <SwipeItem Text="Delete"
                                                BackgroundColor="DarkRed"
                                                Invoked="DeleteCommand"
@@ -111,5 +111,25 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Grid Margin="5" HorizontalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="5" BackgroundColor="AliceBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button 
+                Grid.Column="0"
+                Text="ПОТВЪРДИ"></Button>
+            <Button
+                Grid.Column="1"
+                Text="ПЛАТИ"></Button>
+            <Button
+                Grid.Column="2"
+                Text="ОТКАЖИ"></Button>
+        </Grid>
     </StackLayout>
+
 </ContentPage>

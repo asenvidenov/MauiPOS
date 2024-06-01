@@ -85,10 +85,27 @@ namespace MauiPOS.Data
             return LocalDB.InsertOrReplace(posObject);
         }
 
-        public static int SaveOrders(List<POSOrders> pOSOrders)
+        public static int SaveOrderDetails(ref List<POSOrderDetails> pOSOrderD)
         {
             Init();
             int counter=0;
+            foreach (POSOrderDetails o in pOSOrderD)
+            {
+                counter = +LocalDB.InsertOrReplace(o);
+            }
+            return counter;
+        }
+        public static int SaveOrderDetail(ref POSOrderDetails pOSOrderD)
+        {
+            Init();
+            int counter = 0;
+                counter = +LocalDB.InsertOrReplace(pOSOrderD);
+            return counter;
+        }
+        public static int SaveOrders(List<POSOrders> pOSOrders)
+        {
+            Init();
+            int counter = 0;
             foreach (POSOrders o in pOSOrders)
             {
                 counter = +LocalDB.InsertOrReplace(o);

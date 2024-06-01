@@ -104,6 +104,8 @@ namespace MauiPOS.Models
     public class POSOrderDetails : ObservableObject
     {
         private int _cnt;
+        private int _annul;
+        private string? _modiff;
         [PrimaryKey]
         public int ID { get; set; }
         [NotNull]
@@ -115,8 +117,8 @@ namespace MauiPOS.Models
         [NotNull]
         public int Cnt {  get { return _cnt; } set { SetProperty(ref _cnt, value); } }
         [NotNull]
-        public int Annul {  get; set; }
-        public string? Modiff { get; set; }
+        public int Annul { get { return _annul; } set { SetProperty(ref _annul, value); } }
+        public string? Modiff { get { return _modiff; } set { SetProperty(ref _modiff, value); } }
         [NotNull]
         public Decimal CashPrice { get; set; }
     }
@@ -204,7 +206,9 @@ namespace MauiPOS.Models
     #region Views
     public class POSOrderDetailsView : POSOrderDetails
     {
+        private Color _color;
         public string? CashName { get; set; }
+        public Color? ItemColor { get { return _color; } set { SetProperty(ref _color, value); } }
     }
     public class ViewActiveOrders
     {

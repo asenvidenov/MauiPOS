@@ -54,7 +54,7 @@
                                                CommandParameter="{Binding .}"/>
                                     </SwipeItems>
                                 </SwipeView.RightItems>
-                                <Grid Padding="0" HorizontalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="5">
+                                <Grid HorizontalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
@@ -64,7 +64,11 @@
                                         <ColumnDefinition Width="50"/>
                                         <ColumnDefinition Width="50"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0"
+                                <BoxView 
+                                        Grid.Column="0"
+                                        Grid.Row="0"
+                                        Color="{Binding ItemColor}" />
+                                <Label Grid.Column="0"
                                                Grid.Row="0"
                                                Text="{Binding CashName}"
                                                FontAttributes="Bold"
@@ -72,36 +76,49 @@
                                                HorizontalTextAlignment="Start" HorizontalOptions="Start"
                                                MaximumWidthRequest="300"
                                                />
-                                    <Label Grid.Column="0"
+                                <BoxView 
+                                                Grid.Column="0"
+                                                Grid.Row="1"
+                                                Color="{Binding ItemColor}" />
+                                <Label Grid.Column="0"
                                                Grid.Row="1"
                                                Text="{Binding Modiff, TargetNullValue='БЕЗ'}"
                                                FontSize="Small" 
                                                TextColor="Green"
                                                />
-                                    <BoxView 
-                                                Grid.Column="1"
-                                                Grid.RowSpan="2"
-                                                Color="#008CFF" />
-                                    <Label
-                                               Grid.Column="1"
-                                               Grid.RowSpan="2"
-                                               Text="{Binding Cnt}"
-                                               FontAttributes="Bold"
-                                               FontSize="Large"
-                                               HorizontalTextAlignment="Center" HorizontalOptions="Center"
-                                                />
-                                    <Label
+                                <BoxView 
+                                            Grid.Column="1"
+                                            Grid.RowSpan="2"
+                                            Color="#008CFF" />
+                                <Label
+                                            Grid.Column="1"
+                                            Grid.RowSpan="2"
+                                            Text="{Binding Cnt}"
+                                            FontAttributes="Bold"
+                                            FontSize="Large"
+                                            HorizontalTextAlignment="Center" HorizontalOptions="Center"
+                                            />
+
+                                <BoxView 
+                                                Grid.Column="2"
+                                                Grid.Row="1"
+                                                Color="{Binding ItemColor}" />
+                                <Label
                                                Grid.Column="2"
                                                 Grid.Row="1"
                                                 Text="{Binding Annul}"
                                                 FontSize="Small"
                                                 TextColor="red" VerticalTextAlignment="Center"
                                                 />
-                                    <Label
-                                                Grid.Column="2"
-                                                Grid.Row="0"
-                                                Text="{Binding CashPrice, StringFormat = '{0:F2}'}"
-                                                HorizontalTextAlignment="End" HorizontalOptions="End" />
+                                <BoxView 
+                                            Grid.Column="2"
+                                            Grid.Row="0"
+                                            Color="{Binding ItemColor}" />
+                                <Label
+                                            Grid.Column="2"
+                                            Grid.Row="0"
+                                            Text="{Binding CashPrice, StringFormat = '{0:F2}'}"
+                                            HorizontalTextAlignment="End" HorizontalOptions="End" />
 
 
 

@@ -175,7 +175,7 @@ namespace MauiPOS.Services
 
         public static List<POSOrderDetailsView> RetSrvOrderDetails(int OrderID)
         {
-            POSOrderDetailsView pod = new();
+            POSOrderDetailsView podv = new();
             List<POSOrderDetailsView> result = [];
             if(!IsConnected() ) return [];
             SqlCommand cmd = new()
@@ -185,24 +185,38 @@ namespace MauiPOS.Services
                 CommandText = $"SELECT ID, OrderID, OpID, GoodsID, Cnt, Annul, Modif, CashPrice FROM srvOrderDetails WHERE OrderID={OrderID} and OpID={POSGlobals.localOpID}"
             };
             var _reader = cmd.ExecuteReader();
+            var _color = Color.Parse("AntiqueWhite");
             try
             {
                 while (_reader.Read())
                 {
-                    pod.ID = _reader.GetInt32(0);
-                    pod.OpID = POSGlobals.localOpID;
-                    pod.OrderID = OrderID;
-                    pod.GoodsID = _reader.GetInt32(3);
-                    pod.CashName = new POSRetData().RetCashName(pod.GoodsID);
-                    pod.Cnt = _reader.GetInt32(4) - _reader.GetInt32(5);
-                    pod.Annul = _reader.GetInt32(5);
-                    pod.Modiff = _reader.IsDBNull(6) ? "" : _reader.GetString(6);
-                    pod.CashPrice = (decimal)_reader.GetFloat(7);
+                    podv.ID = _reader.GetInt32(0);
+                    podv.OpID = POSGlobals.localOpID;
+                    podv.OrderID = OrderID;
+                    podv.GoodsID = _reader.GetInt32(3);
+                    podv.CashName = new POSRetData().RetCashName(podv.GoodsID);
+                    podv.Cnt = _reader.GetInt32(4) - _reader.GetInt32(5);
+                    podv.Annul = _reader.GetInt32(5);
+                    podv.Modiff = _reader.IsDBNull(6) ? "" : _reader.GetString(6);
+                    podv.CashPrice = (decimal)_reader.GetFloat(7);
+                    podv.ItemColor = _color;
+                    _color = _color == Color.Parse("AntiqueWhite") ? Color.Parse("GhostWhite") : Color.Parse("AntiqueWhite");
 
-                    result.Add(pod);
+                    result.Add(podv);
+                    POSOrderDetails _pod = new()
+                    {
+                        ID=podv.ID,
+                        OpID = podv.OpID,
+                        OrderID = podv.OrderID,
+                        GoodsID = podv.GoodsID,
+                        Cnt = podv.Cnt,
+                        Annul = podv.Annul,
+                        Modiff = podv.Modiff,
+                        CashPrice = podv.CashPrice
+                    };
+                    POSdata.SaveOrderDetail(ref _pod);
                 }
-                var _res = result.Cast<POSOrderDetails>().ToList();
-                POSdata.SaveOrderDetails(ref _res);
+
                 return result;
             }
             catch { return []; }

@@ -67,7 +67,13 @@ public partial class MAUIOrder : ContentPage
         if (res != null)
         {
             res.Cnt -= 1;
-            if(res.Cnt == 0) {Result.Remove(res); }
+            res.Annul += 1;
+            res.ItemColor = Color.Parse("LightSalmon");
+            if(res.Cnt == 0)
+            {
+                res.ItemColor = Color.Parse("Salmon");
+                Result.Remove(res); 
+            }
             AddToLocalDB(ref res);
         }
     }
@@ -80,17 +86,19 @@ public partial class MAUIOrder : ContentPage
     private void AddGoodToList(int goodsID, int cnt = 1, string? modiff=null)
     {
         (decimal, decimal) gPrice = new POSRetData().RetGoodPrice(goodsID);
+        var _color = cnt%2==0 ? Color.Parse("AntiqueWhite") : Color.Parse("GhostWhite");
         var _newGood = new POSOrderDetailsView()
         {
-            ID=cnt,
-            OpID=POSGlobals.localOpID,
+            ID = cnt,
+            OpID = POSGlobals.localOpID,
             OrderID = POSGlobals.CurrentOrderID,
             GoodsID = goodsID,
             CashName = new POSRetData().RetCashName(goodsID),
-            CashPrice=gPrice.Item1,
+            CashPrice = gPrice.Item1,
             Cnt = cnt,
             Annul = 0,
-            Modiff = modiff
+            Modiff = modiff,
+            ItemColor = _color
         };
         Result.Add(_newGood);
         AddToLocalDB(ref _newGood);

@@ -7,6 +7,8 @@ namespace MauiPOS.Views;
 
 public partial class MAUIOrder : ContentPage
 {
+    private int _maxID;
+
     public List<POSOrderDetailsView> Result { get; set; }
     public MAUIOrder()
 	{
@@ -17,13 +19,49 @@ public partial class MAUIOrder : ContentPage
             oDetails.IsVisible = true;
 
             }
-        ActionCommand = new MyCommand();
-        ActionCommand.CanExecuteFunc = obj => true;
-        ActionCommand.ExecuteFunc = MyActionFunc;
+        BtnGoodsCommand = new MyCommand();
+        BtnGoodsCommand.CanExecuteFunc = obj => true;
+        BtnGoodsCommand.ExecuteFunc = BtnGoodsFunc;
+
+        BtnConfirmCommand = new MyCommand();
+        BtnConfirmCommand.CanExecuteFunc = obj => true;
+        BtnConfirmCommand.ExecuteFunc = BtnConfirmFunc;
+
+        BtnPaymentCommand = new MyCommand();
+        BtnPaymentCommand.CanExecuteFunc = obj => true;
+        BtnPaymentCommand.ExecuteFunc = BtnPaymentFunc;
+
+        BtnChronoCommand = new MyCommand();
+        BtnChronoCommand.CanExecuteFunc = obj => true;
+        BtnChronoCommand.ExecuteFunc = BtnChronoFunc;
         //SetGoodsGroupView(0);
-        GoodsCommand(0);
+        //GoodsCommand(0);
+        MenuCommand();
         DebugInit();
         BindingContext = this;
+    }
+
+    public MyCommand BtnGoodsCommand
+    {
+        get;
+        set;
+    }
+    public MyCommand BtnConfirmCommand
+    {
+        get;
+        set;
+    }
+
+    public MyCommand BtnPaymentCommand
+    {
+        get;
+        set;
+    }
+
+    public MyCommand BtnChronoCommand
+    {
+        get;
+        set;
     }
     private void MenuCommand(object sender, EventArgs args)
     {
@@ -104,6 +142,41 @@ public partial class MAUIOrder : ContentPage
         AddToLocalDB(ref _newGood);
         oDetails.IsVisible = true;
     }
+
+    private void MenuCommand()
+    {
+        Button btnGoods = new()
+        {
+            ImageSource = "plate_utensils.png",
+            Command = BtnGoodsCommand,
+            CommandParameter =0
+        };
+        GoodsFlex.Add(btnGoods);
+
+        Button btnConfirm = new()
+        {
+            ImageSource = "order_chrono.png",
+            Command = BtnChronoCommand,
+            CommandParameter = POSGlobals.CurrentOrderID
+        };
+        GoodsFlex.Add(btnConfirm);
+
+        Button btnPayment = new()
+        {
+            ImageSource = "money_check.png",
+            Command = BtnPaymentCommand,
+            CommandParameter = POSGlobals.CurrentOrderID
+        };
+        GoodsFlex.Add(btnPayment);
+
+        Button btnChrono = new()
+        {
+            ImageSource = "order_chrono.png",
+            Command = BtnChronoCommand,
+            CommandParameter = POSGlobals.CurrentOrderID
+        };
+        GoodsFlex.Add(btnChrono);
+    }
     private void GoodsCommand(int GoodsID)
     {
         int _GParent= new POSRetData().RetGoodParent(GoodsID);
@@ -117,7 +190,7 @@ public partial class MAUIOrder : ContentPage
                 {
                     Text = item.CashName,
                     BackgroundColor = item.IsGroup ? Color.Parse("Blue") : Color.Parse("Green"),
-                    Command = ActionCommand,
+                    Command = BtnGoodsCommand,
                     CommandParameter = item.GoodsID
                 };
                 btnGood.HorizontalOptions = LayoutOptions.FillAndExpand;
@@ -131,7 +204,7 @@ public partial class MAUIOrder : ContentPage
                 {
                     Text = "..",
                     BackgroundColor = Color.Parse("Blue"),
-                    Command = ActionCommand,
+                    Command = BtnGoodsCommand,
                     CommandParameter = _GParent
                 };
                 btnGood.WidthRequest = 150;
@@ -174,7 +247,7 @@ public partial class MAUIOrder : ContentPage
                     Text = item.CashName,
                     BackgroundColor = item.IsGroup ? Color.Parse("Blue") : Color.Parse("Green"),
                     CommandParameter = item.GoodsID,
-                    Command = ActionCommand,
+                    Command = BtnGoodsCommand,
                 };
                 swipeItems.Add(swipeItem);
                 swipeItems.SwipeBehaviorOnInvoked = SwipeBehaviorOnInvoked.RemainOpen;
@@ -187,13 +260,8 @@ public partial class MAUIOrder : ContentPage
         }
         catch { }
     }
-    public MyCommand ActionCommand
-    {
-        get;
-        set;
-    }
 
-    public void MyActionFunc(object parameter)
+    public void BtnGoodsFunc(object parameter)
     {
         int goodID = (int)parameter;
         //SetGoodsGroup((int)parameter);
@@ -226,7 +294,11 @@ public partial class MAUIOrder : ContentPage
         }
     }
 
+    private void BtnConfirmFunc(object parameter) { }
 
+    private void BtnPaymentFunc(object parameter) { }
+
+    private void BtnChronoFunc(object parameter) { }
     
 }
 

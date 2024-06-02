@@ -26,7 +26,7 @@
                     Wrap="Wrap"
                     JustifyContent="SpaceAround" 
                     FlexLayout.Grow="1"
-                        HorizontalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand"
                     MinimumHeightRequest="50"
                     >
         </FlexLayout>
@@ -128,6 +128,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <!--
         <Grid Margin="5" HorizontalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="5" BackgroundColor="AliceBlue">
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -147,6 +148,7 @@
                 Grid.Column="2"
                 Text="ОТКАЖИ"></Button>
         </Grid>
+        -->
     </StackLayout>
 
 </ContentPage>

@@ -7,7 +7,7 @@ namespace MauiPOS.Data
     {
         static SQLiteConnection? LocalDB;
 
-        static void Init()
+        public static void Init()
         {
             if (LocalDB is not null) return;
 

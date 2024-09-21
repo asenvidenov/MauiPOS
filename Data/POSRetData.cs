@@ -7,7 +7,8 @@ namespace MauiPOS.Data
     {
         private SQLiteConnection _cnn;
         public POSRetData()
-        { 
+        {
+            POSdata.Init();
             _cnn= new SQLiteConnection(POSGlobals.DatabasePath(), POSGlobals.Flags, true);
         }
 
